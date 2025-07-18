@@ -1,0 +1,21 @@
+
+query GetStores {
+    stores {
+        id
+        name
+        address {
+            street
+            houseNumber
+            houseNumberAddition
+            postalCode
+            country
+            latitude
+            longitude
+        }
+        todayOpeningHours {
+            scheduleDate
+            openTime
+            closeTime
+        }
+    }
+}
