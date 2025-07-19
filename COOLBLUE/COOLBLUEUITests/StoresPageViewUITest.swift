@@ -30,6 +30,4 @@ class StoresPageViewUITest: XCTestCase {
 
         XCTAssertTrue(storeCard.waitForExistence(timeout: 5))
     }
-
-
 }

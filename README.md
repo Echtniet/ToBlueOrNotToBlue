@@ -62,3 +62,4 @@ Testing is implemented across different layers:
 - [ ] Update `.gitignore` to exclude derived data, Apollo-generated files, etc.  
 - [ ] Properly design the UI for a polished look  
 - [ ] Add more robust and complete test cases across the layers  
+- [ ] Fix console error while UI Testing "`UIScene` lifecycle will soon be required. Failure to adopt will result in an assert in the future."
