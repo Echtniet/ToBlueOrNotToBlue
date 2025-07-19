@@ -93,6 +93,11 @@ class DIContainer {
                 openingHoursSortUseCase: resolver.resolve(OpeningHoursSortUseCaseProtocol.self)!
             )
         }
+        container.register(StoresPageDetailViewModel.self) { resolver in
+            StoresPageDetailViewModel(
+                storesUseCase: resolver.resolve(StoresUseCaseProtocol.self)!
+            )
+        }
     }
 
     private func registerCoordinator() {

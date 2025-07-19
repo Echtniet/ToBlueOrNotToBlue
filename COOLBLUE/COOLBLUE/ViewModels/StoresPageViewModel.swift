@@ -32,13 +32,13 @@ class StoresPageViewModel {
     var isLoading: Bool = false
     var errorMessage: String?
 
-    private let locationService: LocationServiceProtocol
+    @ObservationIgnored private let locationService: LocationServiceProtocol
 
-    private let storesUseCase: StoresUseCaseProtocol
-    private let locationSortUseCase: LocationSortUseCaseProtocol
-    private let openingHoursSortUseCase: OpeningHoursSortUseCaseProtocol
+    @ObservationIgnored private let storesUseCase: StoresUseCaseProtocol
+    @ObservationIgnored private let locationSortUseCase: LocationSortUseCaseProtocol
+    @ObservationIgnored private let openingHoursSortUseCase: OpeningHoursSortUseCaseProtocol
 
-    private var cancellables = Set<AnyCancellable>()
+    @ObservationIgnored private var cancellables = Set<AnyCancellable>()
 
     init(
         locationService: LocationServiceProtocol,

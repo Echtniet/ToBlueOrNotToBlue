@@ -49,7 +49,7 @@ struct StoresPageView: View {
             }
         }
         .task {
-            if viewModel.sortedStores.isEmpty {
+            if viewModel.stores.isEmpty {
                 await viewModel.fetchStores()
             }
         }
