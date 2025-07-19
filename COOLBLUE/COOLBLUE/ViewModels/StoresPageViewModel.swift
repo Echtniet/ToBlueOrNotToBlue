@@ -78,7 +78,7 @@ class StoresPageViewModel {
                     tempStores = self.locationSortUseCase.execute(on: location, with: tempStores)
 
                     if sortByOpeningHours {
-                        tempStores = self.openingHoursSortUseCase.execute(with: tempStores)
+                        tempStores = self.openingHoursSortUseCase.execute(with: tempStores, at: Date())
                     }
 
                     sortedStores = tempStores
@@ -87,7 +87,7 @@ class StoresPageViewModel {
         }
 
         if sortByOpeningHours {
-            tempStores = self.openingHoursSortUseCase.execute(with: tempStores)
+            tempStores = self.openingHoursSortUseCase.execute(with: tempStores, at: Date())
             sortedStores = tempStores
         }
 

@@ -5,39 +5,31 @@
 //  Created by Clinton on 15/07/2025.
 //
 
+import Foundation
+
 protocol OpeningHoursSortUseCaseProtocol {
-    func execute(with stores: [Store]) -> [Store]
+    func execute(with stores: [Store], at currentTime: Date) -> [Store]
 }
 
 class OpeningHoursSortUseCase: OpeningHoursSortUseCaseProtocol {
-    func execute(with stores: [Store]) -> [Store] {
-        let now =  Time.currentSecondsSinceMidnight
+    func execute(with stores: [Store], at currentTime: Date = Date()) -> [Store] {
 
-        return stores.sorted { a, b in
-            let aClose = a.todayOpeningHours?.closeTime?.secondsSinceMidnight
-            let bClose = b.todayOpeningHours?.closeTime?.secondsSinceMidnight
+        return stores.sorted { store1, store2 in
+            let store1Open = store1.isOpen(at: currentTime)
+            let store2Open = store2.isOpen(at: currentTime)
 
-            switch (aClose, bClose) {
-            case let (.some(closeA), .some(closeB)):
-                let aPassed = now > closeA
-                let bPassed = now > closeB
-
-                switch (aPassed, bPassed) {
-                case (true, false):
-                    return true
-                case (false, true):
-                    return false
-                default:
-                    return false
-                }
-
-            case (.some, .none):
-                return true
-            case (.none, .some):
-                return false
-            case (.none, .none):
-                return false
+            if store1Open != store2Open {
+                return store1Open
             }
+
+            let store1OpenSoon = store1.opensWithinNext30Minutes(from: currentTime)
+            let store2OpenSoon = store2.opensWithinNext30Minutes(from: currentTime)
+
+            if store1OpenSoon != store2OpenSoon {
+                return store1OpenSoon
+            }
+
+            return false
         }
     }
 }
