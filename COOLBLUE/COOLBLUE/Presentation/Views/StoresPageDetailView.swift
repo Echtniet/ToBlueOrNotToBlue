@@ -20,13 +20,17 @@ struct StoresPageDetailView: View {
     var body: some View {
         VStack(alignment: .leading) {
             if let store = coordinator.storesPageCoordinator.stores.last {
-                Text(store.name)
-                if let address = store.address {
-                    Text(address.formatted)
+                Group {
+                    Text(store.name)
+                    if let address = store.address {
+                        Text(address.formatted)
+                    }
+                    if let openingTime = store.todayOpeningHours?.openTime, let closingTime = store.todayOpeningHours?.closeTime {
+                        Text("\(openingTime.formattedHourMinute)-\(closingTime.formattedHourMinute)")
+                    }
                 }
-                if let openingTime = store.todayOpeningHours?.openTime, let closingTime = store.todayOpeningHours?.closeTime {
-                    Text("\(openingTime.formattedHourMinute)-\(closingTime.formattedHourMinute)")
-                }
+                .redacted(reason: viewModel.redacted ? .placeholder : [])
+                .animation(.easeInOut, value: viewModel.redacted)
             }
             ScrollView {
                 LazyVStack {
@@ -39,6 +43,7 @@ struct StoresPageDetailView: View {
                     } else {
                         ForEach(viewModel.stores, id: \.self) { store in
                             StoreCard(store: store) {
+                                viewModel.redact()
                                 coordinator.navigate(to: .storeDetail(store))
                             }
                         }

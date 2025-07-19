@@ -12,6 +12,8 @@ import Observation
 class StoresPageDetailViewModel {
     var stores: [Store] = []
 
+    var redacted: Bool = false
+
     var isLoading: Bool = false
     var errorMessage: String?
 
@@ -32,5 +34,12 @@ class StoresPageDetailViewModel {
         }
 
         isLoading = false
+    }
+
+    func redact() {
+        redacted = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.redacted = false
+        }
     }
 }
