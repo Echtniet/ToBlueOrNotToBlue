@@ -24,6 +24,8 @@ struct StoreCard: View {
                 if let openingTime = store.todayOpeningHours?.openTime, let closingTime = store.todayOpeningHours?.closeTime {
                     Text("\(openingTime.formattedHourMinute)-\(closingTime.formattedHourMinute)")
                 }
+                Text(openText())
+                    .foregroundStyle(openStatusColor())
             }
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -35,5 +37,31 @@ struct StoreCard: View {
         }
         .buttonStyle(PlainButtonStyle())
         .accessibilityIdentifier("StoreCard_\(store.name)")
+    }
+
+    func openText() -> String {
+        switch store.openingStatus {
+        case .open:
+            return "Open"
+        case .openingSoon:
+            return "Opening soon"
+        case .closingSoon:
+            return "Closing soon"
+        case .closed:
+            return "Closed"
+        }
+    }
+
+    func openStatusColor() -> Color {
+        switch store.openingStatus {
+        case .open:
+            return .green
+        case .openingSoon:
+            return .yellow
+        case .closingSoon:
+            return .orange
+        case .closed:
+            return .red
+        }
     }
 }
