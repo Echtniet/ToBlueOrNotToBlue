@@ -44,7 +44,7 @@ extension Time {
         return hour * 3600 + minute * 60 + second
     }
     
-    func toDate(today: Date = Date()) ->Date {
+    func toDate(today: Date = Date()) -> Date {
         let calendar = Calendar.current
         return calendar.date(bySettingHour: hour, minute: minute, second: seconds, of: Date())!
     }

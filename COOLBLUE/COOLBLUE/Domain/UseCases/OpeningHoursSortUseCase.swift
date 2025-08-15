@@ -11,8 +11,8 @@ protocol OpeningHoursSortUseCaseProtocol {
     func execute(with stores: [Store], at currentTime: Date) -> [Store]
 }
 
-class OpeningHoursSortUseCase: OpeningHoursSortUseCaseProtocol {
-    func execute(with stores: [Store], at currentTime: Date = Date()) -> [Store] {
+actor OpeningHoursSortUseCase: OpeningHoursSortUseCaseProtocol {
+    nonisolated func execute(with stores: [Store], at currentTime: Date = Date()) -> [Store] {
 
         return stores.sorted { store1, store2 in
             let store1Open = store1.isOpen(at: currentTime)

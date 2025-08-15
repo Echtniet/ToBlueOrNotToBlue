@@ -9,7 +9,7 @@ protocol StoresUseCaseProtocol {
     func execute(forcedRefresh: Bool) async throws -> [Store]
 }
 
-class StoresUseCase: StoresUseCaseProtocol {
+actor StoresUseCase: StoresUseCaseProtocol {
     private let storesRepository: StoresRepositoryProtocol
 
     init(storesRepository: StoresRepositoryProtocol) {

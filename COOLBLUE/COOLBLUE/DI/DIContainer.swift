@@ -43,7 +43,6 @@ class DIContainer {
             }
             .inObjectScope(.weak)
         }
-
         container.register(LocationServiceProtocol.self) { resolver in
             LocationService()
         }

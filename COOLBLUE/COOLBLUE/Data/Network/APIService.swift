@@ -11,7 +11,7 @@ protocol APIServiceProtocol {
     func fetchStores() async throws -> [StoreDTO]
 }
 
-class APIService: APIServiceProtocol {
+actor APIService: APIServiceProtocol {
     private var apolloNetwork: ApolloNetwork
 
     public init(apolloNetwork: ApolloNetwork) {
@@ -40,7 +40,7 @@ class APIService: APIServiceProtocol {
     }
 }
 
-class UITestingMockAPIService: APIServiceProtocol {
+actor UITestingMockAPIService: APIServiceProtocol {
     func fetchStores() async throws -> [StoreDTO] {
         return [
             .init(
@@ -48,6 +48,19 @@ class UITestingMockAPIService: APIServiceProtocol {
                 name: "The Hague",
                 address: .init(
                     street: "Anna van Buerenplein",
+                    houseNumber: "7",
+                    houseNumberAddition: nil,
+                    postalCode: "2595 DA",
+                    country: "NL",
+                    latitude: 52.08300000,
+                    longitude: 4.32533300
+                )
+            ),
+            .init(
+                id: "177",
+                name: "Rotterdam Central",
+                address: .init(
+                    street: "Some address",
                     houseNumber: "7",
                     houseNumberAddition: nil,
                     postalCode: "2595 DA",

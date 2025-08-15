@@ -24,8 +24,15 @@ class StoresPageViewUITest: XCTestCase {
         XCTAssertTrue(storeCard.waitForExistence(timeout: 5))
         storeCard.tap()
 
+
+        let storeCardRotterdam = app.buttons["StoreCard_Rotterdam Central"]
+        XCTAssertTrue(storeCardRotterdam.waitForExistence(timeout: 5))
+        storeCardRotterdam.tap()
+
         let backButton = app.buttons["BackButtonStoreDetail"]
         XCTAssertTrue(backButton.waitForExistence(timeout: 5))
+        backButton.tap()
+        XCTAssertTrue(backButton.waitForExistence(timeout: 2))
         backButton.tap()
 
         XCTAssertTrue(storeCard.waitForExistence(timeout: 5))

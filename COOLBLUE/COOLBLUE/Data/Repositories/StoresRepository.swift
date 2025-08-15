@@ -11,7 +11,7 @@ protocol StoresRepositoryProtocol {
     func getStores(forcedRefresh: Bool) async throws -> [Store]
 }
 
-class StoresRepository: StoresRepositoryProtocol {
+actor StoresRepository: StoresRepositoryProtocol {
 
     private let apiService: APIServiceProtocol
     private let dataCache: DataCache<[Store]>
@@ -25,12 +25,13 @@ class StoresRepository: StoresRepositoryProtocol {
     }
     
     func getStores(forcedRefresh: Bool) async throws -> [Store] {
-        if !forcedRefresh, let cachedStores = dataCache.get() {
+        try await Task.sleep(nanoseconds: 1 * 1_000_000_000)
+        if !forcedRefresh, let cachedStores = await dataCache.get() {
             return cachedStores
         }
         let storesDTO = try await apiService.fetchStores()
         let stores = try storesDTO.map { try Store(dto: $0) }
-        dataCache.set(stores)
+        await dataCache.set(stores)
         return stores
     }
 }

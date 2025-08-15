@@ -10,16 +10,13 @@ import Foundation
 import Observation
 
 @Observable
+@MainActor
 class StoresPageViewModel {
-    var stores: [Store] = [] {
-        didSet {
-            applyFilter()
-        }
-    }
-    var sortedStores: [Store] = []
+    var stores: [Store] = []
 
     var sortByLocation: Bool = false {
         didSet {
+            applyFilter()
             applyFilter()
         }
     }
@@ -38,6 +35,9 @@ class StoresPageViewModel {
     @ObservationIgnored private let locationSortUseCase: LocationSortUseCaseProtocol
     @ObservationIgnored private let openingHoursSortUseCase: OpeningHoursSortUseCaseProtocol
 
+    @ObservationIgnored private var fetchStoresTask: Task<Void, Never>?
+    @ObservationIgnored private var filterTask: Task<Void, Never>?
+
     @ObservationIgnored private var cancellables = Set<AnyCancellable>()
 
     init(
@@ -53,43 +53,66 @@ class StoresPageViewModel {
     }
 
     func fetchStores(forcedRefresh: Bool = false) async {
-        isLoading = true
-        errorMessage = nil
+        fetchStoresTask?.cancel()
+        fetchStoresTask = Task {
+            isLoading = true
+            errorMessage = nil
 
-        do {
-            stores = try await storesUseCase.execute(forcedRefresh: forcedRefresh)
-        } catch {
-            errorMessage = "Error: \(error.localizedDescription)"
+            do {
+                guard !Task.isCancelled else { return }
+                stores = try await storesUseCase.execute(forcedRefresh: forcedRefresh)
+            } catch is CancellationError {
+                print("Fetch cancelled")
+            } catch {
+                errorMessage = "Error: \(error.localizedDescription)"
+            }
+
+            if shouldFilter() {
+                applyFilter()
+            } else {
+                isLoading = false
+            }
         }
+    }
 
-        isLoading = false
+    private func shouldFilter() -> Bool {
+        return sortByLocation || sortByOpeningHours
     }
 
     private func applyFilter() {
-        sortedStores = []
-        var tempStores = stores
+        filterTask?.cancel()
 
-        if sortByLocation {
-            locationService.requestCurrentLocation()
-                .receive(on: DispatchQueue.main)
-                .sink { [weak self] location in
-                    guard let self else { return }
+        filterTask = Task { @MainActor in
+            isLoading = true
+            var tempStores: [Store] = []
 
-                    tempStores = self.locationSortUseCase.execute(on: location, with: tempStores)
+            if sortByLocation {
+                do {
+                    let location = try await locationService.requestCurrentLocationAsync()
+
+                    if Task.isCancelled {
+                        print("Filter cancelled")
+                        return
+                    }
+
+                    tempStores = self.locationSortUseCase.execute(on: location, with: stores)
 
                     if sortByOpeningHours {
                         tempStores = self.openingHoursSortUseCase.execute(with: tempStores, at: Date())
                     }
 
-                    sortedStores = tempStores
+                    stores = tempStores
+                } catch {
+
                 }
-                .store(in: &cancellables)
-        }
+            } else if sortByOpeningHours {
+                tempStores = self.openingHoursSortUseCase.execute(with: stores, at: Date())
+                stores = tempStores
+            } else {
+                await fetchStores()
+            }
 
-        if sortByOpeningHours {
-            tempStores = self.openingHoursSortUseCase.execute(with: tempStores, at: Date())
-            sortedStores = tempStores
+            isLoading = false
         }
-
     }
 }

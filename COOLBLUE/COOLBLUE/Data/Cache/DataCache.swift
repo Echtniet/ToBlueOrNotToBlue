@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class DataCache<T> {
+actor DataCache<T> {
     private var cache: T?
 
     func get() -> T? { cache }

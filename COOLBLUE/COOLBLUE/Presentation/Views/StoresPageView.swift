@@ -29,11 +29,10 @@ struct StoresPageView: View {
                         Text(errorMessage)
                     } else if viewModel.isLoading {
                         Text("Loading...")
-                    } else if viewModel.stores.isEmpty && viewModel.sortedStores.isEmpty {
+                    } else if viewModel.stores.isEmpty {
                         Text("No stores found")
                     } else {
-                        let storesToDisplay = viewModel.sortedStores.isEmpty ? viewModel.stores : viewModel.sortedStores
-                        ForEach(storesToDisplay, id: \.self) { store in
+                        ForEach(viewModel.stores, id: \.self) { store in
                             StoreCard(store: store) {
                                 coordinator.navigate(to: .storeDetail(store))
                             }
@@ -50,6 +49,7 @@ struct StoresPageView: View {
         }
         .task {
             if viewModel.stores.isEmpty {
+                await viewModel.fetchStores()
                 await viewModel.fetchStores()
             }
         }
